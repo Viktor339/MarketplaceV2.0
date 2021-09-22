@@ -1,6 +1,7 @@
 package com.marketplace.entity;
 
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,6 +13,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Setter
 @Getter
+@EqualsAndHashCode
 public class Role {
 
     @Id
@@ -24,6 +26,10 @@ public class Role {
     public enum Name {
         ROLE_USER,
         ROLE_ADMIN
+    }
+
+    public Role(Name name) {
+        this.name = name;
     }
 
 }

@@ -33,6 +33,7 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Role role;
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -46,4 +47,41 @@ public class User {
         return Objects.hash(getUsername(), getEmail(), getPassword(), role);
     }
 
+    public static class Builder {
+        private User newUser;
+
+        public Builder() {
+            newUser = new User();
+        }
+
+        public Builder username(String username) {
+            newUser.username = username;
+            return this;
+        }
+
+        public Builder email(String email) {
+            newUser.email = email;
+            return this;
+        }
+
+        public Builder password(String password) {
+            newUser.password = password;
+            return this;
+        }
+
+        public Builder id(Long id) {
+            newUser.id = id;
+            return this;
+        }
+
+        public Builder role(Role role) {
+            newUser.role = role;
+            return this;
+        }
+
+        public User build() {
+            return newUser;
+        }
+
+    }
 }
