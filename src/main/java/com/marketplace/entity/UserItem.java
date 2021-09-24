@@ -19,10 +19,13 @@ public class UserItem {
     @Column(name = "quantity")
     private Long quantity;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
-    @JoinTable(name = "UserItem_item",
-            joinColumns = @JoinColumn(name = "UserItem_id"),
-            inverseJoinColumns = @JoinColumn(name = "item_id"))
-    private Item item;
+    //@OneToOne(fetch = FetchType.LAZY)
+//    @JoinTable(name = "UserItem_item",
+//            joinColumns = @JoinColumn(name = "UserItem_id"),
+//            inverseJoinColumns = @JoinColumn(name = "item_id"))
+    @Column(name = "item_id")
+    private Long itemId;
+    @Column(name = "user_id")
+    private Long userId;
 
 }

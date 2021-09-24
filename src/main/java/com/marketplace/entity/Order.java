@@ -28,7 +28,11 @@ public class Order {
     public enum Status {
         order_is_being_processed,
         the_item_has_been_sent_to_the_client,
-        items_delivered
+        items_delivered,
+        status_not_selected
     }
 
+    public Order(Status status) {
+        this.status = status;
+    }
 }
