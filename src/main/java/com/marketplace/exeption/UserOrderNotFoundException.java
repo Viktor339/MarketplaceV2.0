@@ -1,7 +1,7 @@
 package com.marketplace.exeption;
 
-public class ProductAlreadyExistException extends RuntimeException{
-    public ProductAlreadyExistException(String message) {
+public class UserOrderNotFoundException extends RuntimeException{
+    public UserOrderNotFoundException(String message) {
         super(message);
     }
 

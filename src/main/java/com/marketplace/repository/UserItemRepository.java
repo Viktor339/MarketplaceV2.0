@@ -8,5 +8,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserItemRepository extends JpaRepository<UserItem, Long> {
     UserItem findAllById(Long id);
+
+    UserItem findUserItemByItemIdAndUserId(Long itemId,Long userId);
+
     void deleteAllByItemIdAndUserId(Long itemId,Long userId);
 }

@@ -23,7 +23,5 @@ public class OrderHistory {
     private Long userId;
     @Column(name = "date")
     private Date date;
-    @Column(name = "status")
-    private Order.Status orderStatus;
 
 }

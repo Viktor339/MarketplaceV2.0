@@ -1,8 +1,6 @@
 package com.marketplace.entity;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
@@ -12,27 +10,24 @@ import java.util.List;
 @NoArgsConstructor
 @Setter
 @Getter
+@EqualsAndHashCode
+@Builder(toBuilder = true)
+@AllArgsConstructor
 public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "status")
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinTable(name = "order_status",
+            joinColumns = @JoinColumn(name = "order_id"),
+            inverseJoinColumns = @JoinColumn(name = "status_id"))
     private Status status;
     @Column(name = "userId")
     private Long userId;
-    @OneToMany
+    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @Column(name = "item")
-    private List<UserItem> item;
+    private List<UserItem> items;
 
-    public enum Status {
-        order_is_being_processed,
-        the_item_has_been_sent_to_the_client,
-        items_delivered,
-        status_not_selected
-    }
-
-    public Order(Status status) {
-        this.status = status;
-    }
 }

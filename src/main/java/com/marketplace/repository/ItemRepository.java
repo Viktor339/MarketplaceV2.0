@@ -26,5 +26,16 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 
     List<Item> findAll();
 
+    @Modifying
+    @Query(value = "update item set name=?2,description=?3,tags=?4,quantity=?5 where name=?1", nativeQuery = true)
+    @Transactional
+    void changeItem(@Param("oldName") String oldName,
+                    @Param("newName") String newName,
+                    @Param("newDescription") String newDescription,
+                    @Param("newTags") String newTags,
+                    @Param("newQuantity") Long newQuantity);
+
+
+
 
 }

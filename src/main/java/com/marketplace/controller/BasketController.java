@@ -30,9 +30,9 @@ public class BasketController {
 
     @GetMapping("/items")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> buyItem(@AuthenticationPrincipal UserDetails user) {
+    public ResponseEntity<?> buy(@AuthenticationPrincipal UserDetails user) {
         User loggedInUserFromDB = userRepository.findAllByUsername(user.getUsername());
-        return basketService.buyItem(loggedInUserFromDB);
+        return basketService.buy(loggedInUserFromDB);
     }
 
     @DeleteMapping("/items")

@@ -1,8 +1,6 @@
 package com.marketplace.entity;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -16,6 +14,8 @@ import java.util.Objects;
 @Setter
 @Getter
 @NoArgsConstructor
+@Builder(toBuilder = true)
+@AllArgsConstructor
 public class User {
 
     @Id
@@ -47,41 +47,5 @@ public class User {
         return Objects.hash(getUsername(), getEmail(), getPassword(), role);
     }
 
-    public static class Builder {
-        private User newUser;
 
-        public Builder() {
-            newUser = new User();
-        }
-
-        public Builder username(String username) {
-            newUser.username = username;
-            return this;
-        }
-
-        public Builder email(String email) {
-            newUser.email = email;
-            return this;
-        }
-
-        public Builder password(String password) {
-            newUser.password = password;
-            return this;
-        }
-
-        public Builder id(Long id) {
-            newUser.id = id;
-            return this;
-        }
-
-        public Builder role(Role role) {
-            newUser.role = role;
-            return this;
-        }
-
-        public User build() {
-            return newUser;
-        }
-
-    }
 }
