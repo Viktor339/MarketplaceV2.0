@@ -1,17 +1,17 @@
 package com.marketplace.entity;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "Order_History")
+@Table(name = "orderHistory")
 @Getter
 @Setter
 @NoArgsConstructor
+@Builder(toBuilder = true)
+@AllArgsConstructor
 public class OrderHistory {
 
     @Id
@@ -22,6 +22,12 @@ public class OrderHistory {
     @Column(name = "user_id")
     private Long userId;
     @Column(name = "date")
-    private Date date;
+    private LocalDateTime date;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinTable(name = "orderHistory_historyStatus",
+            joinColumns = @JoinColumn(name = "orderHistory_id"),
+            inverseJoinColumns = @JoinColumn(name = "historyStatus_id"))
+    private OrderHistoryStatus orderHistoryStatus;
+
 
 }

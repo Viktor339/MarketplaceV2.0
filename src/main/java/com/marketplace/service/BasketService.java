@@ -16,10 +16,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.marketplace.entity.Status.Name.ORDER_IS_BEING_PROCESSED;
+import static com.marketplace.entity.OrderHistoryStatus.Name.CREATED;
+import static com.marketplace.entity.OrderStatus.Name.IN_PROCESSING;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +31,9 @@ public class BasketService {
     private final BasketRepository basketRepository;
     private final UserItemRepository userItemRepository;
     private final OrderRepository orderRepository;
-    private final StatusRepository statusRepository;
+    private final OrderStatusRepository orderStatusRepository;
+    private final OrderHistoryRepository orderHistoryRepository;
+    private final OrderHistoryStatusRepository orderHistoryStatusRepository;
     @PersistenceContext
     private final EntityManager entityManager;
 
@@ -102,10 +106,18 @@ public class BasketService {
         basketRepository.deleteAllByUserId(user.getId());
 
         Order order = Order.builder()
-                .status(statusRepository.findByName(ORDER_IS_BEING_PROCESSED))
+                .orderStatus(orderStatusRepository.findByName(IN_PROCESSING))
                 .userId(user.getId())
                 .items(userItems)
                 .build();
+
+        OrderHistory orderHistory = OrderHistory.builder()
+                .orderId(order.getId())
+                .userId(order.getUserId())
+                .date(LocalDateTime.now())
+                .orderHistoryStatus(orderHistoryStatusRepository.findByName(CREATED))
+                .build();
+        orderHistoryRepository.save(orderHistory);
 
         orderRepository.save(order);
         return ResponseEntity.ok(userBasket);

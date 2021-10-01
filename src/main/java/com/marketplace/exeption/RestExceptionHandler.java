@@ -26,10 +26,10 @@ public class RestExceptionHandler {
         return errorMessage.getMessage();
     }
 
-    @ExceptionHandler(ProductAlreadyExistException.class)
+    @ExceptionHandler(ItemAlreadyExistException.class)
     @ResponseBody
     @ResponseStatus(HttpStatus.CONFLICT)
-    public Map<String, Object> handleProductAlreadyExistException(ProductAlreadyExistException ex) {
+    public Map<String, Object> handleProductAlreadyExistException(ItemAlreadyExistException ex) {
 
         ErrorMessage errorMessage = new ErrorMessage(LocalDateTime.now(),
                 HttpStatus.CONFLICT.value(),

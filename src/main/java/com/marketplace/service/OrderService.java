@@ -1,15 +1,12 @@
 package com.marketplace.service;
 
-import com.marketplace.entity.Item;
-import com.marketplace.entity.Order;
-import com.marketplace.entity.UserItem;
+import com.marketplace.entity.*;
 import com.marketplace.exeption.*;
 import com.marketplace.pojo.ChangeOrderRequest;
 import com.marketplace.pojo.CreateOrderRequest;
 import com.marketplace.pojo.DeleteOrderRequest;
-import com.marketplace.repository.ItemRepository;
-import com.marketplace.repository.OrderRepository;
-import com.marketplace.repository.UserItemRepository;
+import com.marketplace.pojo.ResponseMessage;
+import com.marketplace.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -17,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +29,8 @@ public class OrderService {
     private final UserItemRepository userItemRepository;
     private final AddingItemOrderService addingItemOrderService;
     private final RemovingItemOrderService removingItemOrderService;
+    private final OrderHistoryRepository orderHistoryRepository;
+    private final OrderHistoryStatusRepository orderHistoryStatusRepository;
     @PersistenceContext
     private final EntityManager entityManager;
 
@@ -67,11 +67,20 @@ public class OrderService {
             entityManager.persist(addedItem);
 
         }
-        order.setStatus(statusService.returnStatus(createRequest.getStatus()));
+        order.setOrderStatus(statusService.returnStatus(createRequest.getStatus()));
         order.setItems(resultUserItemList);
         order.setUserId(createRequest.getUserId());
 
         entityManager.persist(order);
+
+        OrderHistory orderHistory = OrderHistory.builder()
+                .orderId(order.getId())
+                .userId(order.getUserId())
+                .date(LocalDateTime.now())
+                .orderHistoryStatus(orderHistoryStatusRepository.findByName(OrderHistoryStatus.Name.CREATED))
+                .build();
+        orderHistoryRepository.save(orderHistory);
+
 
         return ResponseEntity.ok(orderRepository.save(order));
     }
@@ -93,7 +102,16 @@ public class OrderService {
         if (changeRequest.getRemovedItems() != null) {
             removingItemOrderService.removeItem(changeRequest, order);
         }
-        return ResponseEntity.ok("Order changed");
+
+        OrderHistory orderHistory = OrderHistory.builder()
+                .orderId(order.getId())
+                .userId(order.getUserId())
+                .date(LocalDateTime.now())
+                .orderHistoryStatus(orderHistoryStatusRepository.findByName(OrderHistoryStatus.Name.CHANGED))
+                .build();
+        orderHistoryRepository.save(orderHistory);
+
+        return ResponseEntity.ok(new ResponseMessage("Order changed"));
     }
 
     public ResponseEntity<?> deleteOrder(DeleteOrderRequest deleteRequest) {
@@ -110,8 +128,17 @@ public class OrderService {
             entityManager.persist(item);
         }
 
-        orderRepository.delete(order);
-        return ResponseEntity.ok("order deleted");
+        //after deletion, the status changes to "DELETED"
+        order.setOrderStatus(statusService.returnStatus(OrderStatus.Name.DELETED.name()));
+
+        OrderHistory orderHistory = OrderHistory.builder()
+                .orderId(order.getId())
+                .userId(order.getUserId())
+                .date(LocalDateTime.now())
+                .orderHistoryStatus(orderHistoryStatusRepository.findByName(OrderHistoryStatus.Name.DELETED))
+                .build();
+        orderHistoryRepository.save(orderHistory);
+        return ResponseEntity.ok(new ResponseMessage("Order deleted"));
     }
 
 }

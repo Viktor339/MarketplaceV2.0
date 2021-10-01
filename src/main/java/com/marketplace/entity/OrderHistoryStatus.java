@@ -1,6 +1,5 @@
 package com.marketplace.entity;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,11 +8,11 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "status")
+@Table(name = "historyStatus")
 @NoArgsConstructor
 @Setter
 @Getter
-public class Status {
+public class OrderHistoryStatus {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,27 +21,28 @@ public class Status {
     @Column(name = "name")
     private Name name;
 
-    public Status(Name name) {
+    public OrderHistoryStatus(Name name) {
         this.name = name;
     }
 
     public enum Name {
-        ORDER_IS_BEING_PROCESSED,
-        THE_ITEM_HAS_BEEN_SENT_TO_THE_CLIENT,
-        ITEMS_DELIVERED,
+        CREATED,
+        CHANGED,
+        DELETED
     }
+
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Status)) return false;
-        Status status = (Status) o;
-        return getName() == status.getName();
+        if (!(o instanceof OrderHistoryStatus)) return false;
+        OrderHistoryStatus that = (OrderHistoryStatus) o;
+        return getName() == that.getName();
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(getName());
     }
-
 }
+

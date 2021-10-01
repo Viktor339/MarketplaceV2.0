@@ -18,7 +18,7 @@ public class UserService {
 
     public ResponseEntity<?> registrationUser(RegistrationRequest registrationRequest) {
 
-        User user = new User.Builder()
+        User user = User.builder()
                 .username(registrationRequest.getUsername())
                 .email(registrationRequest.getEmail())
                 .password(passwordEncoder.encode(registrationRequest.getPassword()))

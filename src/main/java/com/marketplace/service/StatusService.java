@@ -1,34 +1,37 @@
 package com.marketplace.service;
 
-import com.marketplace.entity.Status;
+import com.marketplace.entity.OrderStatus;
 import com.marketplace.exeption.StatusNotFoundException;
-import com.marketplace.repository.StatusRepository;
+import com.marketplace.repository.OrderStatusRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class StatusService {
-    private final StatusRepository statusRepository;
+    private final OrderStatusRepository orderStatusRepository;
 
-    public Status returnStatus(String status) {
+    public OrderStatus returnStatus(String status) {
 
-        Status orderWithStatus = statusRepository.findByName(Status.Name.ORDER_IS_BEING_PROCESSED);
+        OrderStatus orderWithOrderStatus = orderStatusRepository.findByName(OrderStatus.Name.IN_PROCESSING);
         switch (status) {
-            case "order_is_being_processed":
-                orderWithStatus = statusRepository.findByName(Status.Name.ORDER_IS_BEING_PROCESSED);
+            case "IN_PROCESSING":
+                orderWithOrderStatus = orderStatusRepository.findByName(OrderStatus.Name.IN_PROCESSING);
                 break;
-            case "the_item_has_been_sent_to_the_client":
-                orderWithStatus = statusRepository.findByName(Status.Name.THE_ITEM_HAS_BEEN_SENT_TO_THE_CLIENT);
+            case "SENT":
+                orderWithOrderStatus = orderStatusRepository.findByName(OrderStatus.Name.SENT);
                 break;
-            case "items_delivered":
-                orderWithStatus = statusRepository.findByName(Status.Name.ITEMS_DELIVERED);
+            case "DELIVERED":
+                orderWithOrderStatus = orderStatusRepository.findByName(OrderStatus.Name.DELIVERED);
+                break;
+            case "DELETED":
+                orderWithOrderStatus = orderStatusRepository.findByName(OrderStatus.Name.DELETED);
                 break;
         }
-        if (!status.equals(orderWithStatus.getName().name())) {
+        if (!status.equals(orderWithOrderStatus.getName().name())) {
             throw new StatusNotFoundException("Entered status not found");
         }
 
-        return orderWithStatus;
+        return orderWithOrderStatus;
     }
 }

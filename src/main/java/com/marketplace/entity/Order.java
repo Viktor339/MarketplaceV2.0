@@ -20,10 +20,10 @@ public class Order {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinTable(name = "order_status",
+    @JoinTable(name = "order_orderStatus",
             joinColumns = @JoinColumn(name = "order_id"),
-            inverseJoinColumns = @JoinColumn(name = "status_id"))
-    private Status status;
+            inverseJoinColumns = @JoinColumn(name = "orderStatus_id"))
+    private OrderStatus orderStatus;
     @Column(name = "userId")
     private Long userId;
     @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
