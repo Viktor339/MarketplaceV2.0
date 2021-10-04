@@ -46,32 +46,30 @@ public class OrderService {
         List<UserItem> resultUserItemList = new ArrayList<>();
 
         //check for each itemId from request that item is exist and check available quantity of item
-        for (UserItem userItem : createRequest.getAddedItems()) {
-            Item addedItem = itemRepository.findItemById(userItem.getItemId());
+        for (UserItem requestUserItem : createRequest.getAddedItems()) {
+            Item addedItem = itemRepository.findItemById(requestUserItem.getItemId());
 
             if (addedItem == null) {
                 throw new ItemNotExistException("Entered item doesn't exist");
             }
-            if (addedItem.getAvailableQuantity() < userItem.getQuantity()) {
+            if (addedItem.getAvailableQuantity() < requestUserItem.getQuantity()) {
                 throw new NotEnoughItemQuantityException("Required quantity of items exceeds available quantity");
             }
 
-            UserItem newUserItem = new UserItem();
-            userItem.setUserId(createRequest.getUserId());
-            userItem.setItemId(userItem.getItemId());
-            userItem.setQuantity(userItem.getQuantity());
-            userItemRepository.save(newUserItem);
+            UserItem newUserItem = UserItem.builder()
+                    .userId(createRequest.getUserId())
+                    .itemId(requestUserItem.getItemId())
+                    .quantity(requestUserItem.getQuantity())
+                    .build();
+                      userItemRepository.save(newUserItem);
 
-            addedItem.setAvailableQuantity(addedItem.getAvailableQuantity() - userItem.getQuantity());
-            resultUserItemList.add(userItem);
-            entityManager.persist(addedItem);
-
+            addedItem.setAvailableQuantity(addedItem.getAvailableQuantity() - requestUserItem.getQuantity());
+            resultUserItemList.add(newUserItem);
         }
-        order.setOrderStatus(statusService.returnStatus(createRequest.getStatus()));
-        order.setItems(resultUserItemList);
-        order.setUserId(createRequest.getUserId());
 
-        entityManager.persist(order);
+        order.setOrderStatus(statusService.returnStatus(createRequest.getStatus()));
+        order.setUserItem(resultUserItemList);
+        order.setUserId(createRequest.getUserId());
 
         OrderHistory orderHistory = OrderHistory.builder()
                 .orderId(order.getId())
@@ -121,7 +119,7 @@ public class OrderService {
         }
 
         //check each userItem and increase the available quantity
-        List<UserItem> userItems = order.getItems();
+        List<UserItem> userItems = order.getUserItem();
         for (UserItem deletedItem : userItems) {
             Item item = itemRepository.findItemById(deletedItem.getItemId());
             item.setAvailableQuantity(item.getAvailableQuantity() + deletedItem.getQuantity());

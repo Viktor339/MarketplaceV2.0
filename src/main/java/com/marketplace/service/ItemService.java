@@ -1,6 +1,7 @@
 package com.marketplace.service;
 
 import com.marketplace.entity.Item;
+import com.marketplace.entity.UserItem;
 import com.marketplace.exeption.ItemAlreadyExistException;
 import com.marketplace.exeption.ItemNotExistException;
 import com.marketplace.pojo.ChangeItemRequest;
@@ -14,13 +15,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
+import java.util.Map;
 
 
 @Service
 @RequiredArgsConstructor
 public class ItemService {
     private final ItemRepository itemRepository;
-    private final SearchItemService searchItemService;
+    private final DeleteItemService deleteItemService;
+    private final SearchItemInBasketsService searchItemInBasketsService;
+    private final SearchItemInOrdersService searchItemInOrdersService;
+    private final ChangeItemService changeItemService;
+
 
     public ResponseEntity<?> createItem(@RequestBody CreateItemRequest createRequest) {
         //create item with unique name
@@ -39,36 +45,22 @@ public class ItemService {
     public ResponseEntity<?> changeItem(ChangeItemRequest changeRequest) {
         //The item we want to change must not be in the cart.
         //throw bad request if the item is in the user's cart
-        Item itemBeforeChange = itemRepository.findItemById(changeRequest.getItemId());
+        Item changedItem = itemRepository.findItemById(changeRequest.getItemId());
 
-        if (!searchItemService.searchItem(itemBeforeChange)) {
+        if (changedItem == null) {
+            throw new ItemNotExistException("The item to be removed does not exist");
+        }
 
-            String nameOfTheItemToBeChanged = itemBeforeChange.getName();
-            String newName = changeRequest.getNewItemName();
-            String newTags = changeRequest.getNewItemTags();
-            String newDescription = changeRequest.getNewItemDescription();
-            Long newQuantity = changeRequest.getQuantity();
+        Map<Long, List<UserItem>> duplicatesInBaskets = searchItemInBasketsService.searchItem(changedItem,changeRequest.isForceUpdate());
+        Map<Long, List<UserItem>> duplicatesInOrders = searchItemInOrdersService.searchItem(changedItem,changeRequest.isForceUpdate());
 
-            //if we do not change some criteria, we get them from the old element
-            if (newName == null) {
-                newName = itemBeforeChange.getName();
-            }
+        // if duplicatesInBaskets or duplicatesInOrders != null then we must change item anyway
+        if (duplicatesInBaskets!=null||duplicatesInOrders!=null) {
 
-            if (newTags == null) {
-                newTags = itemBeforeChange.getTags();
-            }
-            if (newDescription == null) {
-                newDescription = itemBeforeChange.getDescription();
-            }
-            if (newQuantity == null) {
-                newQuantity = itemBeforeChange.getAvailableQuantity();
-            }
-
-            itemRepository.changeItem(nameOfTheItemToBeChanged,
-                    newName,
-                    newDescription,
-                    newTags,
-                    newQuantity);
+            changeItemService.changeItem(duplicatesInBaskets,
+                    duplicatesInOrders,
+                    changeRequest,changedItem
+            );
         }
 
         return ResponseEntity.ok(new ResponseMessage("Item changed"));
@@ -76,14 +68,19 @@ public class ItemService {
 
     public ResponseEntity<?> deleteItem(DeleteItemRequest deleteRequest) {
 
-        Item itemBeforeDeleting = itemRepository.findItemById(deleteRequest.getId());
+        Item removedItem = itemRepository.findItemById(deleteRequest.getId());
 
-        if (itemBeforeDeleting == null) {
+        if (removedItem == null) {
             throw new ItemNotExistException("The item to be removed does not exist");
         }
 
-        if (!searchItemService.searchItem(itemBeforeDeleting)) {
-            itemRepository.deleteById(deleteRequest.getId());
+        // if user's basket or order contains removedItem we must to throw exception and do not delete item
+        Map<Long, List<UserItem>> duplicatesInBaskets = searchItemInBasketsService.searchItem(removedItem,deleteRequest.isForceUpdate());
+        Map<Long, List<UserItem>> duplicatesInOrders = searchItemInOrdersService.searchItem(removedItem,deleteRequest.isForceUpdate());
+
+        // if duplicatesInBaskets or duplicatesInOrders != null then we must delete item anyway
+        if (duplicatesInBaskets!=null||duplicatesInOrders!=null) {
+            deleteItemService.deleteItem(duplicatesInBaskets,duplicatesInOrders,removedItem,deleteRequest);
         }
         return ResponseEntity.ok(new ResponseMessage("Item deleted"));
     }

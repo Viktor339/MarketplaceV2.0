@@ -42,7 +42,7 @@ public class AddingItemOrderService {
 
             //  if userItem exists in basket -> change quantity
             //else -> create new userItem
-            for (UserItem itemFromUserOrder : order.getItems()) {
+            for (UserItem itemFromUserOrder : order.getUserItem()) {
 
                 if (itemFromUserOrder.equals(userItem)) {
                     itemFromUserOrder.setUserId(changeRequest.getUserId());
@@ -60,7 +60,7 @@ public class AddingItemOrderService {
                         .build();
 
                 userItemRepository.save(newUserItem);
-                order.getItems().add(newUserItem);
+                order.getUserItem().add(newUserItem);
             }
 
             // reserve item

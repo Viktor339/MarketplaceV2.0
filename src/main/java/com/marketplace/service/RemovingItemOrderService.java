@@ -29,7 +29,7 @@ public class RemovingItemOrderService {
             boolean isContains = false;
 
             // find item in userOrder and delete it
-            for (UserItem itemFromUserOrder : order.getItems()) {
+            for (UserItem itemFromUserOrder : order.getUserItem()) {
 
                 if (itemFromUserOrder.equals(itemFromRequest)) {
                     itemFromUserOrder.setUserId(changeRequest.getUserId());

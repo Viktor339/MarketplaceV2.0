@@ -28,6 +28,6 @@ public class Order {
     private Long userId;
     @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @Column(name = "item")
-    private List<UserItem> items;
+    private List<UserItem> userItem;
 
 }

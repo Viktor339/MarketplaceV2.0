@@ -7,6 +7,7 @@ import com.marketplace.exeption.ItemNotFoundException;
 import com.marketplace.exeption.NotEnoughItemQuantityException;
 import com.marketplace.pojo.AddItemRequest;
 import com.marketplace.pojo.DeleteItemRequest;
+import com.marketplace.pojo.ItemMessage;
 import com.marketplace.pojo.ResponseMessage;
 import com.marketplace.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static com.marketplace.entity.OrderHistoryStatus.Name.CREATED;
@@ -34,6 +36,7 @@ public class BasketService {
     private final OrderStatusRepository orderStatusRepository;
     private final OrderHistoryRepository orderHistoryRepository;
     private final OrderHistoryStatusRepository orderHistoryStatusRepository;
+    private final MailSenderService mailSenderService;
     @PersistenceContext
     private final EntityManager entityManager;
 
@@ -108,7 +111,7 @@ public class BasketService {
         Order order = Order.builder()
                 .orderStatus(orderStatusRepository.findByName(IN_PROCESSING))
                 .userId(user.getId())
-                .items(userItems)
+                .userItem(userItems)
                 .build();
 
         OrderHistory orderHistory = OrderHistory.builder()
@@ -118,8 +121,17 @@ public class BasketService {
                 .orderHistoryStatus(orderHistoryStatusRepository.findByName(CREATED))
                 .build();
         orderHistoryRepository.save(orderHistory);
-
         orderRepository.save(order);
+
+        //get a list of all the user's items and send information about each item to the user's email
+        List<User> userList = Collections.singletonList(user);
+        List<Item> itemList = new ArrayList<>();
+        for (UserItem userItem : userItems) {
+            itemList.add(itemRepository.findItemById(userItem.getItemId()));
+        }
+        ItemMessage itemMessage = new ItemMessage(itemList);
+        mailSenderService.send(userList, "please check your chart", itemMessage.toString());
+
         return ResponseEntity.ok(userBasket);
     }
 

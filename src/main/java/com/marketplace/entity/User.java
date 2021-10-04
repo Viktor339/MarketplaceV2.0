@@ -1,5 +1,6 @@
 package com.marketplace.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import javax.persistence.*;
@@ -16,6 +17,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @Builder(toBuilder = true)
 @AllArgsConstructor
+@JsonIgnoreProperties(value = {"accountNonExpired", "enabled", "authorities", "accountNonLocked", "credentialsNonExpired", "accountNonExpired"})
 public class User {
 
     @Id
