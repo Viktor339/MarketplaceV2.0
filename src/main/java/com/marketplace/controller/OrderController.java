@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "Order controller", description = "Allows to perform CRUD operations with orders ")
+@Tag(name = "Order controller", description = "Allows admin to perform CRUD operations with orders ")
 @RestController
 @RequestMapping("/orders")
 @RequiredArgsConstructor

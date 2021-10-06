@@ -1,5 +1,7 @@
 package com.marketplace.config;
 
+import com.marketplace.exeption.CustomAuthenticationFailureHandler;
+import com.marketplace.exeption.CustomAccessDeniedHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +15,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @EnableWebSecurity
@@ -54,9 +58,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
                 .anyRequest().authenticated()
                 .and().httpBasic()
                 .and().formLogin()
+                .failureHandler(authenticationFailureHandler())
                 .permitAll()
                 .and()
-                .logout().logoutUrl("/registration/logout").logoutSuccessUrl("/").deleteCookies("auth_code", "JSESSIONID").invalidateHttpSession(true);
+                .exceptionHandling().accessDeniedHandler(accessDeniedHandler());
 
 
 
@@ -65,6 +70,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
 
     }
 
+
+    @Bean
+    public AuthenticationFailureHandler authenticationFailureHandler() {
+        return new CustomAuthenticationFailureHandler();
+    }
+
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler()
+    {
+        return new CustomAccessDeniedHandler();
+    }
 
     @Bean
     protected DaoAuthenticationProvider daoAuthenticationProvider() {
