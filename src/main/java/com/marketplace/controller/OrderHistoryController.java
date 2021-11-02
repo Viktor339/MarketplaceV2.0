@@ -1,6 +1,6 @@
 package com.marketplace.controller;
 
-import com.marketplace.service.OrderHistoryService;
+import com.marketplace.service.orderhistory.OrderHistoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

@@ -1,7 +1,7 @@
 package com.marketplace.controller;
 
-import com.marketplace.pojo.RegistrationRequest;
-import com.marketplace.service.UserService;
+import com.marketplace.controller.request.RegistrationRequest;
+import com.marketplace.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

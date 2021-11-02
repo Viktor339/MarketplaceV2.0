@@ -1,9 +1,9 @@
 package com.marketplace.controller;
 
-import com.marketplace.pojo.ChangeItemRequest;
-import com.marketplace.pojo.CreateItemRequest;
-import com.marketplace.pojo.DeleteItemRequest;
-import com.marketplace.service.ItemService;
+import com.marketplace.controller.request.ChangeItemRequest;
+import com.marketplace.controller.request.CreateItemRequest;
+import com.marketplace.controller.request.DeleteItemRequest;
+import com.marketplace.service.item.ItemService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

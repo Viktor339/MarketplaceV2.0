@@ -1,10 +1,10 @@
 package com.marketplace.controller;
 
 import com.marketplace.entity.User;
-import com.marketplace.pojo.AddItemRequest;
-import com.marketplace.pojo.DeleteItemRequest;
+import com.marketplace.controller.request.AddItemRequest;
+import com.marketplace.controller.request.DeleteItemRequest;
 import com.marketplace.repository.UserRepository;
-import com.marketplace.service.BasketService;
+import com.marketplace.service.basket.BasketService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
