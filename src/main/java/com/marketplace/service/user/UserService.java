@@ -16,7 +16,7 @@ public class UserService {
     private final RegistrationUserService registrationUserService;
 
 
-    public ResponseEntity<?> registrationUser(RegistrationRequest registrationRequest) {
+    public User registrationUser(RegistrationRequest registrationRequest) {
 
         User user = User.builder()
                 .username(registrationRequest.getUsername())
@@ -26,7 +26,7 @@ public class UserService {
                 .build();
 
 
-        return ResponseEntity.ok(registrationUserService.save(user));
+        return registrationUserService.save(user);
     }
 
 

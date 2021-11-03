@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/basket")
+@PreAuthorize("hasRole('USER')")
 public class BasketController {
 
     private final BasketService basketService;
@@ -26,26 +27,23 @@ public class BasketController {
 
     @Operation(summary = "Add item", description = "Allows user to add item into basket")
     @PutMapping("/items")
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> addItem(@RequestBody AddItemRequest addRequest, @AuthenticationPrincipal UserDetails user) {
-        User loggedInUserFromDB = userRepository.findAllByUsername(user.getUsername());
-        return basketService.addItem(addRequest, loggedInUserFromDB);
+    public ResponseEntity<?> addItem(@RequestBody AddItemRequest addRequest, @AuthenticationPrincipal UserDetails userDetails) {
+        User user = userRepository.findAllByUsername(userDetails.getUsername());
+        return ResponseEntity.ok(basketService.addItem(addRequest, user));
     }
 
     @Operation(summary = "Buy item", description = "Allows user to buy all items it basket")
     @GetMapping("/items")
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> buy(@AuthenticationPrincipal UserDetails user) {
-        User loggedInUserFromDB = userRepository.findAllByUsername(user.getUsername());
-        return basketService.buy(loggedInUserFromDB);
+    public ResponseEntity<?> buy(@AuthenticationPrincipal UserDetails userDetails) {
+        User user = userRepository.findAllByUsername(userDetails.getUsername());
+        return ResponseEntity.ok(basketService.buy(user));
     }
 
     @Operation(summary = "Delete item", description = "Allows user to delete item from basket")
     @DeleteMapping("/items")
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> deleteItem(@RequestBody DeleteItemRequest deleteItemRequest, @AuthenticationPrincipal UserDetails user) {
-        User loggedInUserFromDB = userRepository.findAllByUsername(user.getUsername());
-        return basketService.deleteItem(deleteItemRequest,loggedInUserFromDB);
+    public ResponseEntity<?> deleteItem(@RequestBody DeleteItemRequest deleteItemRequest, @AuthenticationPrincipal UserDetails userDetails) {
+        User user = userRepository.findAllByUsername(userDetails.getUsername());
+        return ResponseEntity.ok(basketService.deleteItem(deleteItemRequest,user));
     }
 
 }

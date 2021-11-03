@@ -40,7 +40,7 @@ public class BasketService {
     @PersistenceContext
     private final EntityManager entityManager;
 
-    public ResponseEntity<?> addItem(AddItemRequest addRequest, User user) {
+    public ResponseMessage addItem(AddItemRequest addRequest, User user) {
 
         Item addedItem = itemRepository.findItemById(addRequest.getId());
         if (addedItem == null) {
@@ -95,11 +95,11 @@ public class BasketService {
             entityManager.persist(userBasket);
             entityManager.flush();
         }
-        return ResponseEntity.ok(new ResponseMessage("Item added into basket"));
+        return new ResponseMessage("Item added into basket");
     }
 
 
-    public ResponseEntity<?> buy(User user) {
+    public Basket buy(User user) {
 
         Basket userBasket = basketRepository.getBasketByUserId(user.getId());
         if (userBasket == null) {
@@ -132,10 +132,10 @@ public class BasketService {
         ItemMessage itemMessage = new ItemMessage(itemList);
         mailSenderService.send(userList, "please check your chart", itemMessage.toString());
 
-        return ResponseEntity.ok(userBasket);
+        return userBasket;
     }
 
-    public ResponseEntity<?> deleteItem(DeleteItemRequest deleteRequest, User user) {
+    public ResponseMessage deleteItem(DeleteItemRequest deleteRequest, User user) {
 
         Basket userBasket = basketRepository.getBasketByUserId(user.getId());
         if (userBasket == null) {
@@ -161,6 +161,6 @@ public class BasketService {
                 throw new ItemNotFoundException("Removed item doesn't found");
             }
         }
-        return ResponseEntity.ok(new ResponseMessage("Item deleted"));
+        return new ResponseMessage("Item deleted");
     }
 }

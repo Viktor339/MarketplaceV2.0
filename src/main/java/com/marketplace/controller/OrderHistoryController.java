@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/orders-history")
+@PreAuthorize("hasRole('ADMIN')")
 public class OrderHistoryController {
 
     private final OrderHistoryService orderHistoryService;
 
     @Operation(summary = "Get orders history ", description = "Allows admin to get orders history list")
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getHistory() {
         return ResponseEntity.ok(orderHistoryService.getHistory());
     }

@@ -23,28 +23,28 @@ public class ItemController {
     @PostMapping()
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> createItem(@RequestBody CreateItemRequest createRequest) {
-        return itemService.createItem(createRequest);
+        return ResponseEntity.ok(itemService.createItem(createRequest));
     }
 
     @Operation(summary = "Get items", description = "Allows admin and user get all item list")
     @GetMapping()
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<?> getAllItems() {
-        return itemService.getAllItems();
+        return ResponseEntity.ok(itemService.getAllItems());
     }
 
     @Operation(summary = "Change item", description = "Allows admin to change item")
     @PutMapping()
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> changeItem(@RequestBody ChangeItemRequest changeRequest) {
-        return itemService.changeItem(changeRequest);
+        return ResponseEntity.ok(itemService.changeItem(changeRequest));
     }
 
     @Operation(summary = "Delete item", description = "Allows admin to delete item")
     @DeleteMapping()
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteItem(@RequestBody DeleteItemRequest deleteRequest) {
-        return itemService.deleteItem(deleteRequest);
+        return ResponseEntity.ok(itemService.deleteItem(deleteRequest));
     }
 
 }

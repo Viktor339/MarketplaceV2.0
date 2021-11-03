@@ -15,35 +15,32 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/orders")
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMIN')")
 public class OrderController {
 
     private final OrderService orderService;
 
     @Operation(summary = "Create order", description = "Allows admin to create order")
     @PostMapping()
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> createOrder(@RequestBody CreateOrderRequest createRequest) {
-        return orderService.createOrder(createRequest);
+        return ResponseEntity.ok(orderService.createOrder(createRequest));
     }
 
     @Operation(summary = "Change order", description = "Allows admin to change order")
     @PutMapping()
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> changeOrder(@RequestBody ChangeOrderRequest changeRequest) {
-        return orderService.changeOrder(changeRequest);
+        return ResponseEntity.ok(orderService.changeOrder(changeRequest));
     }
 
     @Operation(summary = "Get orders list", description = "Allows admin to get orders list")
     @GetMapping()
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getAllOrders() {
-        return orderService.getAllOrders();
+        return ResponseEntity.ok(orderService.getAllOrders());
     }
 
     @Operation(summary = "Delete order", description = "Allows admin to delete order")
     @DeleteMapping()
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteOrder(@RequestBody DeleteOrderRequest deleteOrder) {
-        return orderService.deleteOrder(deleteOrder);
+        return ResponseEntity.ok(orderService.deleteOrder(deleteOrder));
     }
 }

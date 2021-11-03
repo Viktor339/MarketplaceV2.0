@@ -13,8 +13,8 @@ import java.util.List;
 public class OrderHistoryService {
     private final OrderHistoryRepository orderHistoryRepository;
 
-    public ResponseEntity<?> getHistory() {
+    public List<OrderHistory> getHistory() {
         List<OrderHistory> orderHistory = orderHistoryRepository.findAll();
-        return ResponseEntity.ok(orderHistory);
+        return orderHistory;
     }
 }

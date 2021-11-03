@@ -34,7 +34,7 @@ public class OrderService {
     @PersistenceContext
     private final EntityManager entityManager;
 
-    public ResponseEntity<?> createOrder(CreateOrderRequest createRequest) {
+    public Order createOrder(CreateOrderRequest createRequest) {
 
         //cant create order if user already has order
         // admin can only change orderStatus
@@ -80,15 +80,15 @@ public class OrderService {
         orderHistoryRepository.save(orderHistory);
 
 
-        return ResponseEntity.ok(orderRepository.save(order));
+        return orderRepository.save(order);
     }
 
-    public ResponseEntity<?> getAllOrders() {
+    public List<Order> getAllOrders() {
         List<Order> orderList = orderRepository.findAll();
-        return ResponseEntity.ok(orderList);
+        return orderList;
     }
 
-    public ResponseEntity<?> changeOrder(ChangeOrderRequest changeRequest) {
+    public ResponseMessage changeOrder(ChangeOrderRequest changeRequest) {
         Order order = orderRepository.findByUserId(changeRequest.getUserId());
         if (order == null) {
             throw new UserOrderNotFoundException("No orders found for this user");
@@ -109,10 +109,10 @@ public class OrderService {
                 .build();
         orderHistoryRepository.save(orderHistory);
 
-        return ResponseEntity.ok(new ResponseMessage("Order changed"));
+        return new ResponseMessage("Order changed");
     }
 
-    public ResponseEntity<?> deleteOrder(DeleteOrderRequest deleteRequest) {
+    public ResponseMessage deleteOrder(DeleteOrderRequest deleteRequest) {
         Order order = orderRepository.findOrderById(deleteRequest.getOrderId());
         if (order == null) {
             throw new UserOrderNotExistException("No orders found for this order id");
@@ -136,7 +136,7 @@ public class OrderService {
                 .orderHistoryStatus(orderHistoryStatusRepository.findByName(OrderHistoryStatus.Name.DELETED))
                 .build();
         orderHistoryRepository.save(orderHistory);
-        return ResponseEntity.ok(new ResponseMessage("Order deleted"));
+        return new ResponseMessage("Order deleted");
     }
 
 }

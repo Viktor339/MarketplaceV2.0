@@ -21,7 +21,7 @@ public class UserController {
     @Operation(summary = "Create user", description = "Allows to register admins and users")
     @PostMapping()
     public ResponseEntity<?> registrationUser(@RequestBody RegistrationRequest registrationRequest) {
-        return userService.registrationUser(registrationRequest);
+        return ResponseEntity.ok(userService.registrationUser(registrationRequest));
     }
 
 

@@ -28,21 +28,20 @@ public class ItemService {
     private final ChangeItemService changeItemService;
 
 
-    public ResponseEntity<?> createItem(@RequestBody CreateItemRequest createRequest) {
+    public ResponseMessage createItem(@RequestBody CreateItemRequest createRequest) {
         //create item with unique name
         if (itemRepository.existsByName(createRequest.getName())) {
             throw new ItemAlreadyExistException("Product with this name has already been created");
         } else
             itemRepository.createNewItem(createRequest.getName(), createRequest.getDescription(), createRequest.getTags(), createRequest.getAvailableQuantity());
-        return ResponseEntity.ok(new ResponseMessage("Added a new item"));
+        return new ResponseMessage("Added a new item");
     }
 
-    public ResponseEntity<?> getAllItems() {
-        List<Item> itemList = itemRepository.findAll();
-        return ResponseEntity.ok(itemList);
+    public List<Item> getAllItems() {
+        return itemRepository.findAll();
     }
 
-    public ResponseEntity<?> changeItem(ChangeItemRequest changeRequest) {
+    public ResponseMessage changeItem(ChangeItemRequest changeRequest) {
         //The item we want to change must not be in the cart.
         //throw bad request if the item is in the user's cart
         Item changedItem = itemRepository.findItemById(changeRequest.getItemId());
@@ -63,10 +62,10 @@ public class ItemService {
             );
         }
 
-        return ResponseEntity.ok(new ResponseMessage("Item changed"));
+        return new ResponseMessage("Item changed");
     }
 
-    public ResponseEntity<?> deleteItem(DeleteItemRequest deleteRequest) {
+    public ResponseMessage deleteItem(DeleteItemRequest deleteRequest) {
 
         Item removedItem = itemRepository.findItemById(deleteRequest.getId());
 
@@ -82,6 +81,6 @@ public class ItemService {
         if (duplicatesInBaskets!=null||duplicatesInOrders!=null) {
             deleteItemService.deleteItem(duplicatesInBaskets,duplicatesInOrders,removedItem,deleteRequest);
         }
-        return ResponseEntity.ok(new ResponseMessage("Item deleted"));
+        return new ResponseMessage("Item deleted");
     }
 }
